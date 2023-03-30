@@ -4,18 +4,30 @@ import backbone.main_net as net
 import train as train
 import test as test
 
+#define usage msg
+def msg(name=None):
+    return '''main.py --command
+            [train, for training]
+            [test, for testing]
+            [net, show cnn layer]
+            [hello, for view something]
+            comment
+            more comment
+        '''
+
 #define argument
-parser = argparse.ArgumentParser()
-parser.add_argument('--command', type=str, required=True, help='train for training, test for testing, net for print layer used, hello for testing')
+parser = argparse.ArgumentParser(usage=msg())
+parser.add_argument('--command', type=str)
 
 args = parser.parse_args()
 
 if __name__ == '__main__':
     if args.command == 'train':
-        print('trian.py')
-    if args.command == 'test':
+        #TODO: for testing purpose
+        train.train("")
+    elif args.command == 'test':
         print('test')
-    if args.command == 'net':
+    elif args.command == 'net':
         print(net.MainNet())
-    if args.command == 'hello':
-        print('hello!')
+    elif args.command == 'hello':
+        print('This Code is implemented from paper Titled "Vehicle classification using a real-time convolutional structure based on DWT pooling layer and SE blocks"')

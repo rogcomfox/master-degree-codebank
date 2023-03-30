@@ -9,7 +9,7 @@ import backbone.main_net as net
 
 def train(path_to_train_data, batch_size=4, num_workers=2, num_epochs=50):
     data_transform = transforms.Compose(
-        [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        [transforms.ToTensor(), transforms.Resize(256,256), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     )
     #load train data
     trainset = datasets.ImageFolder(root=path_to_train_data, transform=data_transform)
