@@ -6,7 +6,7 @@ from torchvision import transforms
 import os
 
 from train import train_model
-from comvis.test import test_model
+from test_model import test_model
 from dataset.loader import get_train_valid_loader, get_test_loader
 from backbone.main_net import initialize_model
 # from util.util import workdir_copy
@@ -17,7 +17,7 @@ def main():
     '''
     Run as: (python ./part2/main.py 2>&1) | tee /home/hdd/logs/openimg/$(date +'%y%m%d%H%M%S').txt
     '''
-
+    #set max_split_size_mb in case out of memory 
     # checks and logs
     pwd = os.getcwd()
 
@@ -30,8 +30,8 @@ def main():
     torch.backends.cudnn.benchmark = False
 
     # paths to dataset
-    train_data_dir = '/home/nvme/data/openimg/train/train/'
-    test_data_dir = '/home/nvme/data/openimg/test/testset/'
+    train_data_dir = 'C://Users/ROG_is_Awesome/Downloads/vehicle/train/train/'
+    test_data_dir = 'C://Users/ROG_is_Awesome/Downloads/vehicle/test/testset/'
 
     # Number of classes in the dataset
     num_classes = len(os.listdir(train_data_dir))
@@ -44,7 +44,7 @@ def main():
     # resnet, alexnet, vgg, squeezenet, densenet, inception
     # 'resnext50_32x4d', 'resnext101_32x8d', 'resnext101_32x48d_wsl', 'resnext101_32x32d_wsl'
     # 'resnext101_32x16d_wsl
-    model_name = "alexnet"
+    model_name = "vgg"
     # Flag for feature extracting. When False, we finetune the whole model,
     #   when True we only update the reshaped layer params
     feature_extract = False
@@ -65,7 +65,7 @@ def main():
     pin_memory = True
     weighted_train_sampler = False
     weighted_loss = False
-    num_epochs = 40
+    num_epochs = 20
 
     # preventing pytorch from allocating some memory on default GPU (0)
     torch.cuda.set_device(device)

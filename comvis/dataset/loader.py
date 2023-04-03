@@ -3,8 +3,8 @@ import torch.utils.data
 from torchvision import datasets
 
 from util.util import plot_images
-from sampler import valid_and_train_samplers
-from dataset import TestImageFolder
+from dataset.sampler import valid_and_train_samplers
+from dataset.dataset import TestImageFolder
 
 def get_train_valid_loader(data_dir: str,
                            batch_size: int,
@@ -66,7 +66,7 @@ def get_train_valid_loader(data_dir: str,
             pin_memory=pin_memory,
         )
         data_iter = iter(sample_loader)
-        images, labels = data_iter.next()
+        images, labels = next(data_iter)
         X = images.numpy().transpose([0, 2, 3, 1])
         plot_images(X, data_dir, labels)
 

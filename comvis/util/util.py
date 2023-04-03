@@ -61,5 +61,5 @@ def plot_images(images, data_dir, cls_true, cls_pred=None):
         ax.set_yticks([])
 
     plt.show(block=False)
-    plt.pause(3)
+    plt.pause(10)
     plt.close()
