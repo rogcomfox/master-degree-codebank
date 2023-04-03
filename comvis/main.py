@@ -3,27 +3,23 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 from torchvision import transforms
-from time import localtime, strftime
 import os
 
 from train import train_model
-from test import test_model
+from comvis.test import test_model
 from dataset.loader import get_train_valid_loader, get_test_loader
 from backbone.main_net import initialize_model
-from util.util import workdir_copy
-from util.img_transform import ImgAugTransform
+# from util.util import workdir_copy
+# from util.img_transform import ImgTransform
+from datetime import datetime
 
 def main():
     '''
     Run as: (python ./part2/main.py 2>&1) | tee /home/hdd/logs/openimg/$(date +'%y%m%d%H%M%S').txt
     '''
-    # save the experiment time
-    start_time = strftime("%y%m%d%H%M%S", localtime())
 
     # checks and logs
     pwd = os.getcwd()
-    assert os.getcwd().endswith('VehicleRecognition')
-    assert os.path.exists('./part2/experiments/')
 
     print(f'Working dir: {pwd}')
     # fix the random seed
@@ -42,16 +38,13 @@ def main():
 
     # define the paths
     save_pred_path = None
-    save_pred_path = f'./part2/experiments/{start_time}.csv'
-    save_best_model_path = f'/home/hdd/logs/openimg/{start_time}/best_model.pt'
-
-    # backup the working directiory
-    workdir_copy(pwd, os.path.split(save_best_model_path)[0])
+    save_pred_path = 'pred_result.csv'
+    save_best_model_path = 'classify_model.pth'
 
     # resnet, alexnet, vgg, squeezenet, densenet, inception
     # 'resnext50_32x4d', 'resnext101_32x8d', 'resnext101_32x48d_wsl', 'resnext101_32x32d_wsl'
     # 'resnext101_32x16d_wsl
-    model_name = "resnext101_32x16d_wsl"
+    model_name = "alexnet"
     # Flag for feature extracting. When False, we finetune the whole model,
     #   when True we only update the reshaped layer params
     feature_extract = False
@@ -72,7 +65,7 @@ def main():
     pin_memory = True
     weighted_train_sampler = False
     weighted_loss = False
-    num_epochs = 20
+    num_epochs = 40
 
     # preventing pytorch from allocating some memory on default GPU (0)
     torch.cuda.set_device(device)
@@ -90,8 +83,8 @@ def main():
             transforms.Resize(input_size),
             transforms.RandomCrop(input_size),
             transforms.RandomHorizontalFlip(),
-            ImgAugTransform(input_size, 0.25),
-            transforms.ToPILImage(),
+            # ImgTransform(input_size, 0.25),
+            # transforms.ToPILImage(),
             transforms.ToTensor(),
             transforms.Normalize(means, stds),
         ]),
@@ -156,7 +149,7 @@ def main():
     criterion = nn.CrossEntropyLoss(weights)
 
     # print some things here so it will be seen in terminal for longer time
-    print(f'Timestep: {start_time}')
+    print(f'Start Training Time: {datetime.now()}')
     print(f'using model: {model_name}')
     print(f'Using optimizer: {optimizer_ft}')
     print(f'Device {device}')
@@ -172,7 +165,7 @@ def main():
     # do test inference
     if save_pred_path is not None:
         test_model(model_ft, dataloaders_dict, device, save_pred_path,
-                   is_inception=(model_name == "inception"))
+                    is_inception=(model_name == "inception"))
 
 
 if __name__ == "__main__":
@@ -181,3 +174,4 @@ if __name__ == "__main__":
     # args = parser.parse_args()
     # print(args)
     main()
+    print("Finish Training Time: ", datetime.now())

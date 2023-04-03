@@ -1,15 +1,15 @@
 # for some setup
 import matplotlib.pyplot as plt
 import os
-from shutil import copytree, ignore_patterns
+# from shutil import copytree, ignore_patterns
 import numpy as np
 
 from typing import Dict, Tuple
 
 
-def workdir_copy(pwd: str, copy_path: str):
-    cp_path = os.path.join(copy_path, 'wdir_copy')
-    copytree(pwd, cp_path, ignore=ignore_patterns('__pycache__', '.git'))
+# def workdir_copy(pwd: str, copy_path: str):
+#     cp_path = os.path.join(copy_path, 'wdir_copy')
+#     copytree(pwd, cp_path, ignore=ignore_patterns('__pycache__', '.git'))
 
 def save_predictions(
         save_path: str,
@@ -18,9 +18,9 @@ def save_predictions(
     ) -> None:
     '''
         Format:
-        Id,Category
-        0,Car
-        1,Catepillar
+        Id,Category,ImgPath
+        0,Car,bla.jpg
+        1,Catepillar,bla.jpg
     '''
     with open(save_path, 'w') as outf:
         # header
@@ -30,7 +30,7 @@ def save_predictions(
         for (pred_path, pred_idx) in predictions:
             # extract Id from the filename
             Id = int(os.path.split(pred_path)[1].strip('.jpg'))
-            outf.write(f'{Id},{idx_to_class[pred_idx]}\n')
+            outf.write(f'{Id},{idx_to_class[pred_idx]},{pred_path}\n')
 
     print(f'Wrote preds to {save_path}')
 
@@ -61,5 +61,5 @@ def plot_images(images, data_dir, cls_true, cls_pred=None):
         ax.set_yticks([])
 
     plt.show(block=False)
-    plt.pause(10)
+    plt.pause(3)
     plt.close()
