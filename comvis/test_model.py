@@ -6,6 +6,8 @@ from typing import Dict, Union
 
 def test_model(
         model: nn.Module,
+        res_loss,
+        res_acc,
         dataloaders: Dict[str, torch.utils.data.dataloader.DataLoader],
         device: torch.device,
         save_pred_path: Union[None, str] = None,
@@ -38,4 +40,4 @@ def test_model(
 
     # save predictions
     if save_pred_path is not None:
-        save_predictions(save_pred_path, predictions, idx_to_class)
+        save_predictions(save_pred_path, res_loss, res_acc, predictions, idx_to_class)

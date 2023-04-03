@@ -122,4 +122,4 @@ def train_model(
 
     # train extra epochs on 
 
-    return model, val_acc_history
+    return model, val_acc_history, best_loss, best_acc

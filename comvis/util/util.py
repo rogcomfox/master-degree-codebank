@@ -13,18 +13,25 @@ from typing import Dict, Tuple
 
 def save_predictions(
         save_path: str,
+        res_loss,
+        res_acc,
         predictions: Tuple[str, int],
         idx_to_class: Dict[int, str]
     ) -> None:
     '''
         Format:
+
+        Train Accuracy:
+        Val Accuray:
         Id,Category,ImgPath
         0,Car,bla.jpg
         1,Catepillar,bla.jpg
     '''
     with open(save_path, 'w') as outf:
         # header
-        outf.write('Id,Category\n')
+        outf.write('Accuracy: ', res_acc)
+        outf.write('Loss: ', res_loss)
+        outf.write('Id,Category,ImgPath\n')
 
         # other lines
         for (pred_path, pred_idx) in predictions:

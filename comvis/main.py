@@ -36,10 +36,10 @@ def main():
     # Number of classes in the dataset
     num_classes = len(os.listdir(train_data_dir))
 
-    # define the paths
-    save_pred_path = None
-    save_pred_path = 'pred_result.csv'
-    save_best_model_path = 'classify_model.pth'
+    # # define the paths
+    # save_pred_path = None
+    # save_pred_path = 'pred_result.csv'
+    # save_best_model_path = 'classify_model.pth'
 
     # resnet, alexnet, vgg, squeezenet, densenet, inception
     # 'resnext50_32x4d', 'resnext101_32x8d', 'resnext101_32x48d_wsl', 'resnext101_32x32d_wsl'
@@ -48,6 +48,10 @@ def main():
     # Flag for feature extracting. When False, we finetune the whole model,
     #   when True we only update the reshaped layer params
     feature_extract = False
+    # define the paths
+    save_pred_path = None
+    save_pred_path = f'result/{model_name}/pred_result{model_name}.csv'
+    save_best_model_path = f'result/{model_name}/classify_model_{model_name}.pth'
     # hyper parameters
     device = torch.device("cuda:0")
     valid_size = 0.10
@@ -157,14 +161,14 @@ def main():
     print(f'Transforms: {data_transforms}')
 
     # Train and evaluate
-    model_ft, hist = train_model(
+    model_ft, hist, loss, acc = train_model(
         model_ft, dataloaders_dict, criterion, optimizer_ft, device, save_best_model_path,
         num_epochs=num_epochs, is_inception=(model_name == "inception")
     )
 
     # do test inference
     if save_pred_path is not None:
-        test_model(model_ft, dataloaders_dict, device, save_pred_path,
+        test_model(model_ft, loss, acc, dataloaders_dict, device, save_pred_path,
                     is_inception=(model_name == "inception"))
 
 
