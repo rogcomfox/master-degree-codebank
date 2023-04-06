@@ -1,11 +1,17 @@
-from tqdm import tqdm
 import torch
 import numpy as np
 import time
 import os
 import copy
-
 from typing import Union
+from tqdm import tqdm
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from util.img_transform import ImgTransform
+from imutils import paths
 
 def train_model(
     model, 
@@ -123,3 +129,8 @@ def train_model(
     # train extra epochs on 
 
     return model, val_acc_history, best_loss, best_acc
+
+def train_handcrafted(img_path, data_loader):
+    img_paths = list(paths.list_images(img_path))
+    img_transform = ImgTransform(256)
+    

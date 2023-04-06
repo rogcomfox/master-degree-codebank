@@ -1,43 +1,24 @@
 import torch
 import torch.utils.data
+import cv2
+import os
+import numpy as np
 from torchvision import datasets
-
 from util.util import plot_images
+from util.img_transform import ImgTransform
 from dataset.sampler import valid_and_train_samplers
 from dataset.dataset import TestImageFolder
 
-def get_train_valid_loader(data_dir: str,
-                           batch_size: int,
-                           data_transforms: dict,
-                           random_state: int,
-                           weighted_sampler: bool,
-                           valid_size: float,
-                           shuffle: bool,
-                           show_sample: bool,
-                           num_workers: int,
-                           pin_memory: bool):
-    """
-    Utility function for loading and returning train and valid.
-    If using CUDA, num_workers should be set to 1 and pin_memory to True.
-    Params
-    ------
-    - data_dir: path directory to the dataset.
-    - batch_size: how many samples per batch to load.
-    - data_transforms: whether to apply the data augmentation scheme
-    - random_state: fix seed for reproducibility.
-    - valid_size: percentage split of the training set used for
-      the validation set. Should be a float in the range [0, 1].
-    - shuffle: whether to shuffle the train/validation indices.
-    - show_sample: plot 3x8 sample grid of the dataset.
-    - num_workers: number of subprocesses to use when loading the dataset.
-    - pin_memory: whether to copy tensors into CUDA pinned memory. Set it to
-      True if using GPU.
-    - weighted: whether to use a weighted sampler
-    Returns
-    -------
-    - train_loader: training set iterator.
-    - valid_loader: validation set iterator.
-    """
+def get_train_valid_loader(data_dir: str, 
+                            batch_size: int, 
+                            data_transforms: dict, 
+                            random_state: int, 
+                            weighted_sampler: bool,
+                            valid_size: float,
+                            shuffle: bool,
+                            show_sample: bool,
+                            num_workers: int,
+                            pin_memory: bool):
 
     # load the dataset
     train_dataset = datasets.ImageFolder(data_dir, data_transforms['train'])
@@ -78,19 +59,6 @@ def get_test_loader(data_dir: str,
                     data_transforms: dict,
                     num_workers: int,
                     pin_memory: bool):
-    """
-    Params
-    ------
-    - data_dir: path directory to the dataset.
-    - batch_size: how many samples per batch to load.
-    - data_transforms: whether to apply the data augmentation scheme
-    - num_workers: number of subprocesses to use when loading the dataset.
-    - pin_memory: whether to copy tensors into CUDA pinned memory. Set it to
-      True if using GPU.
-    Returns
-    -------
-    - test_loader: test set iterator.
-    """
 
     test_dataset = TestImageFolder(data_dir, data_transforms['valid'])
     test_loader = torch.utils.data.DataLoader(
@@ -98,3 +66,16 @@ def get_test_loader(data_dir: str,
         pin_memory=pin_memory,
     )
     return test_loader
+
+def train_loader_handcrafted(img_paths):
+    data = []
+    labels = []
+
+    for(i, img_path) in enumerate(img_paths):
+        img = cv2.imread(img_path)
+        label = img_path.split(os.path.sep)[-2]
+        # preprocess image
+        data.append(img)
+        labels.append(label)
+    
+    return (np.array(data), np.array(labels))

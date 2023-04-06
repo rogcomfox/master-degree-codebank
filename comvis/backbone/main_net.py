@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision import models
+from backbone.mcnn_net import MCNN18, MCNN12, MCNN9
 
 def set_parameter_requires_grad(model, feature_extracting):
     if feature_extracting:
@@ -14,7 +15,31 @@ def initialize_model(model_name, num_classes, feature_extract, use_pretrained=Tr
     model_ft = None
     input_size = 0
 
-    if model_name == "resnet":
+    if model_name == 'MCNN9':
+        "based on paper"
+        model_ft = MCNN9()
+        set_parameter_requires_grad(model_ft, feature_extract)
+        num_ftrs = model_ft.fc.in_features
+        model_ft.fc = nn.Linear(num_ftrs, num_classes)
+        input_size = 224
+
+    if model_name == 'MCNN12':
+        "based on paper"
+        model_ft = MCNN12()
+        set_parameter_requires_grad(model_ft, feature_extract)
+        num_ftrs = model_ft.fc.in_features
+        model_ft.fc = nn.Linear(num_ftrs, num_classes)
+        input_size = 224
+
+    elif model_name == 'MCNN18':
+        "based on paper"
+        model_ft = MCNN18()
+        set_parameter_requires_grad(model_ft, feature_extract)
+        num_ftrs = model_ft.fc.in_features
+        model_ft.fc = nn.Linear(num_ftrs, num_classes)
+        input_size = 224
+
+    elif model_name == "resnet":
         """ Resnet18
         """
         model_ft = models.resnet18(pretrained=use_pretrained)

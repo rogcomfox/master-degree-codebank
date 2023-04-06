@@ -13,7 +13,8 @@ from backbone.main_net import initialize_model
 # from util.img_transform import ImgTransform
 from datetime import datetime
 
-def main():
+#run main method for models based on NN
+def main_network():
     '''
     Run as: (python ./part2/main.py 2>&1) | tee /home/hdd/logs/openimg/$(date +'%y%m%d%H%M%S').txt
     '''
@@ -171,11 +172,13 @@ def main():
         test_model(model_ft, loss, acc, dataloaders_dict, device, save_pred_path,
                     is_inception=(model_name == "inception"))
 
+def main_handcrafted():
+    x = 0
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser(description='Training experiment.')
-    # parser.add_argument('--epochs', type=int, default=10)
-    # args = parser.parse_args()
-    # print(args)
-    main()
-    print("Finish Training Time: ", datetime.now())
+    a = input("Choose This type(NN/Not-NN): ")
+    if(a == 'NN'):
+        main_network()
+        print("Finish Training Time: ", datetime.now())
+    elif(a == 'Not-NN'):
+        main_handcrafted()

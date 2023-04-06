@@ -23,6 +23,6 @@ class ImgTransform(object):
             imgaug.Sometimes(param, imgaug.PerspectiveTransform(scale=(0.01, 0.15)))
         ])
 
-    def __call__(self, img):
+    def augment_transform(self, img):
         img = np.array(img)
         return self.aug.augment_image(img)
