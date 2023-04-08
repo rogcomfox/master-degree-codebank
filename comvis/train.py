@@ -129,8 +129,3 @@ def train_model(
     # train extra epochs on 
 
     return model, val_acc_history, best_loss, best_acc
-
-def train_handcrafted(img_path, data_loader):
-    img_paths = list(paths.list_images(img_path))
-    img_transform = ImgTransform(256)
-    
