@@ -108,4 +108,4 @@ def test_model(model_path, path_to_single_test):
     predict = model.predict_proba(img_arr)
     for ind,val in enumerate(categories):
         print(f'{val} = {predict[0][ind]*100}%')
-    print("The predicted image is : "+categories[model.predict(img_arr)[0]])
+    print("The predicted image is : ", categories[model.predict(img_arr)[0]])
