@@ -75,8 +75,8 @@ class VehicleNet(nn.Module):
             nn.Conv2d(128, 256, kernel_size=5, stride=1),
             PoolingLayer(256)
         )
-        self.dropout = nn.Dropout(0.25)
-        self.fc1 = nn.Linear(32400, 256)
+        self.dropout = nn.Dropout(0.5)
+        self.fc1 = nn.Linear(55696, 256)
         self.fc2 = nn.Linear(256, 17)
     
     def forward(self, x):
@@ -92,4 +92,4 @@ class VehicleNet(nn.Module):
         return F.log_softmax(out, 1)
 
 model = VehicleNet()
-print(summary(model.cuda(), input_size=(3, 200, 200)))
+print(summary(model.cuda(), input_size=(3, 256, 256)))

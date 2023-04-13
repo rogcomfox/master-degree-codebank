@@ -148,5 +148,5 @@ class MCNN18(nn.Module):
         out = self.fc(out)
         return F.log_softmax(out, 1)
 
-model = MCNN12()
-print(summary(model, input_size=(3, 224, 224)))
+model = MCNN18()
+print(summary(model.cuda(), input_size=(3, 224, 224)))

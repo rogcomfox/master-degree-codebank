@@ -14,6 +14,7 @@ from sklearn.naive_bayes import GaussianNB
 
 #global var
 categories = ['Bicycle', 'Bus', 'Car', 'Motorcycle', 'Truck', 'Van']
+# categories = ['Ambulance', 'Segway'] #this only fo test code purpose, not the whole code
 
 #load data
 def init_data(path_to_train, is_pca=True):
@@ -22,6 +23,7 @@ def init_data(path_to_train, is_pca=True):
     # categories = ['Ambulance', 'Barge', 'Bicycle', 'Boat', 'Bus', 'Car', 'Cart', 'Caterpillar', 'Helicopter', 'Limousine', 'Motorcycle', 'Segway', 'Snowmobile', 'Tank', 'Taxi', 'Truck', 'Van']
     img_arr = []
     label_arr = []
+    print("Start Read Image Data if PCA = {} at {}".format(is_pca, datetime.datetime.now()))
     for i in categories:
         path = os.path.join(path_to_train, i)
         count = 0
@@ -42,6 +44,7 @@ def init_data(path_to_train, is_pca=True):
                 # print data reading of image
         print('Done Processing Category : ', i)
         # print("Processing {} images from total {} images".format(count, len(img_list)))
+    print("Finish Read Image Data if PCA = {} at {}".format(is_pca, datetime.datetime.now()))
     img_data = np.array(img_arr)
     label_data = np.array(label_arr)
     #define ram consumption
@@ -49,7 +52,7 @@ def init_data(path_to_train, is_pca=True):
     return is_pca, img_data, label_data
 
 #feature extraction with pca for reduce dimension (default: 20)
-def pca(img, p_components=20):
+def pca(img, p_components=100):
     b, g, r = cv.split(img)
     init_pca = PCA(p_components)
     #transfrom and inverse red channel
@@ -67,7 +70,7 @@ def pca(img, p_components=20):
 
 #classify with svm
 def svm(img_arr, label_arr, c=1, gamma=0.0001, kernel='linear'):
-    x_train, x_test, y_train, y_test = train_test_split(img_arr, label_arr, test_size=0.2, random_state=42)
+    x_train, x_test, y_train, y_test = train_test_split(img_arr, label_arr, test_size=0.1, random_state=42)
     #building model
     print("Evaluate Accuracy with SVM....")
     print('Start Training SVM: ', datetime.datetime.now())
@@ -81,7 +84,7 @@ def svm(img_arr, label_arr, c=1, gamma=0.0001, kernel='linear'):
     print('Finish Training SVM: ', datetime.datetime.now())
 
 def naive_bayes(img_arr, label_arr, is_pca):
-    x_train, x_test, y_train, y_test = train_test_split(img_arr, label_arr, test_size=0.2, random_state=42)
+    x_train, x_test, y_train, y_test = train_test_split(img_arr, label_arr, test_size=0.1, random_state=42)
     #building model
     print("Evaluate Accuracy with Naive Bayes....")
     start_time = datetime.datetime.now()
@@ -92,15 +95,19 @@ def naive_bayes(img_arr, label_arr, is_pca):
     naive_acc = accuracy_score(y_pred, y_test)*100
     print('Naive Bayes Accuracy: {} %'.format(round(naive_acc, 3)))
     # save model
-    pickle.dump(naive_acc, open('svm_model.p', 'wb'))
+    if is_pca:
+        pickle.dump(naive_acc, open('naive_model_is_pca.p', 'wb'))
+    else:
+        pickle.dump(naive_acc, open('naive_model.p', 'wb'))
     end_time = datetime.datetime.now()
     print('Finish Training Naive Bayes: ', end_time)
-    arr_log = ["Naive Bayes", is_pca, str(start_time), str(end_time), str(naive_acc), str(img_arr.nbytes / (1024 * 1000.0))]
+    arr_log = ["NaiveBayes", is_pca, str(start_time), str(end_time), str(naive_acc), str(img_arr.nbytes / (1024 * 1000.0))]
     create_log_file(arr_log)
+    show_report(y_pred, y_test)
 
 #classify with knn
 def knn(img_arr, label_arr, is_pca, n_neighbors=2, n_jobs=-1):
-    x_train, x_test, y_train, y_test = train_test_split(img_arr, label_arr, test_size=0.2, random_state=42)
+    x_train, x_test, y_train, y_test = train_test_split(img_arr, label_arr, test_size=0.1, random_state=42)
     #building model
     print("Evaluate Accuracy with KNN....")
     start_time = datetime.datetime.now()
@@ -122,12 +129,16 @@ def knn(img_arr, label_arr, is_pca, n_neighbors=2, n_jobs=-1):
     knn_acc = accuracy_score(y_pred, y_test)*100
     print('KNN Accuracy: {} %'.format(round(knn_acc, 3)))
     # save model
-    pickle.dump(knn_model, open('knn_model.p', 'wb'))
+    if is_pca:
+        pickle.dump(knn_acc, open('knn_model_is_pca.p', 'wb'))
+    else:
+        pickle.dump(knn_acc, open('knn_model.p', 'wb'))
     end_time = datetime.datetime.now()
     print('Finish Training: ', end_time)
     #create log file
     arr_log = ["KNN", is_pca, str(start_time), str(end_time), str(knn_acc), str(img_arr.nbytes / (1024 * 1000.0))]
     create_log_file(arr_log)
+    show_report(y_pred, y_test)
 
 def create_log_file(arr_log):
     #plot data
@@ -140,7 +151,7 @@ def create_log_file(arr_log):
         "RAM Consumption": arr_log[5]
     }
     json_obj = json.dumps(dict, indent=4)
-    with open(f'{arr_log[0]}_log.json', 'w') as out:
+    with open(f'{arr_log[0]}_PCA_{arr_log[1]}_log.json', 'w') as out:
         out.write(json_obj)
 
 def test_model(model_path, path_to_single_test):

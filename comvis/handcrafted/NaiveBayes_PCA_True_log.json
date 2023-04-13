@@ -1,0 +1,8 @@
+{
+    "Model Name": "NaiveBayes",
+    "Using PCA": true,
+    "Start Training Time": "2023-04-13 09:02:05.675047",
+    "Finish Training Time": "2023-04-13 09:09:33.970433",
+    "Accuracy": "36.832633473305336",
+    "RAM Consumption": "2449.314"
+}

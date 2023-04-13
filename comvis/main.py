@@ -37,17 +37,7 @@ def main_network():
     # Number of classes in the dataset
     num_classes = len(os.listdir(train_data_dir))
 
-    # # define the paths
-    # save_pred_path = None
-    # save_pred_path = 'pred_result.csv'
-    # save_best_model_path = 'classify_model.pth'
-
-    # resnet, alexnet, vgg, squeezenet, densenet, inception
-    # 'resnext50_32x4d', 'resnext101_32x8d', 'resnext101_32x48d_wsl', 'resnext101_32x32d_wsl'
-    # 'resnext101_32x16d_wsl
     model_name = "vgg"
-    # Flag for feature extracting. When False, we finetune the whole model,
-    #   when True we only update the reshaped layer params
     feature_extract = False
     # define the paths
     save_pred_path = None
@@ -56,21 +46,13 @@ def main_network():
     # hyper parameters
     device = torch.device("cuda:0")
     valid_size = 0.10
-    if model_name.startswith('resnext'):
-        lr = 5e-7
-        # batch_size = 32
-        batch_size = 8
-    elif model_name.startswith('densenet'):
-        lr = 1e-5
-        batch_size = 32
-    else:
-        lr = 1e-4
-        batch_size = 64
+    lr = 1e-4
+    batch_size = 64
     num_workers = 16
     pin_memory = True
     weighted_train_sampler = False
     weighted_loss = False
-    num_epochs = 20
+    num_epochs = 40
 
     # preventing pytorch from allocating some memory on default GPU (0)
     torch.cuda.set_device(device)
