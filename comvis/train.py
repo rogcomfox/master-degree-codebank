@@ -6,13 +6,6 @@ import copy
 from typing import Union
 from tqdm import tqdm
 
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from util.img_transform import ImgTransform
-from imutils import paths
-
 def train_model(
     model, 
     dataloaders, 
@@ -20,8 +13,7 @@ def train_model(
     optimizer, 
     device: torch.device,
     save_best_model_path: Union[None, str] = None,
-    num_epochs: int = 25, 
-    is_inception: bool = False):
+    num_epochs: int = 25):
     since = time.time()
 
     val_acc_history = []

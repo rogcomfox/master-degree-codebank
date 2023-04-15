@@ -5,7 +5,7 @@ import os
 import numpy as np
 from torchvision import datasets
 from util.util import plot_images
-from util.img_transform import ImgTransform
+# from util.img_transform import ImgTransform
 from dataset.sampler import valid_and_train_samplers
 from dataset.dataset import TestImageFolder
 
@@ -66,16 +66,3 @@ def get_test_loader(data_dir: str,
         pin_memory=pin_memory,
     )
     return test_loader
-
-def train_loader_handcrafted(img_paths):
-    data = []
-    labels = []
-
-    for(i, img_path) in enumerate(img_paths):
-        img = cv2.imread(img_path)
-        label = img_path.split(os.path.sep)[-2]
-        # preprocess image
-        data.append(img)
-        labels.append(label)
-    
-    return (np.array(data), np.array(labels))

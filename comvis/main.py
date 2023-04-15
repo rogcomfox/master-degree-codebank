@@ -15,14 +15,12 @@ from datetime import datetime
 
 #run main method for models based on NN
 def main_network():
-    '''
-    Run as: (python ./part2/main.py 2>&1) | tee /home/hdd/logs/openimg/$(date +'%y%m%d%H%M%S').txt
-    '''
+    
     #set max_split_size_mb in case out of memory 
     # checks and logs
     pwd = os.getcwd()
-
     print(f'Working dir: {pwd}')
+    
     # fix the random seed
     seed = 13
     torch.manual_seed(seed)
@@ -54,15 +52,12 @@ def main_network():
     weighted_loss = False
     num_epochs = 40
 
-    # preventing pytorch from allocating some memory on default GPU (0)
     torch.cuda.set_device(device)
 
-    # Initialize the model for this run
     model_ft, input_size = initialize_model(
         model_name, num_classes, feature_extract, use_pretrained=True)
 
     # Data augmentation and normalization for training
-    # Just normalization for validation
     means = [0.485, 0.456, 0.406]
     stds = [0.229, 0.224, 0.225]
     data_transforms = {
@@ -146,21 +141,13 @@ def main_network():
     # Train and evaluate
     model_ft, hist, loss, acc = train_model(
         model_ft, dataloaders_dict, criterion, optimizer_ft, device, save_best_model_path,
-        num_epochs=num_epochs, is_inception=(model_name == "inception")
+        num_epochs=num_epochs
     )
 
     # do test inference
     if save_pred_path is not None:
-        test_model(model_ft, loss, acc, dataloaders_dict, device, save_pred_path,
-                    is_inception=(model_name == "inception"))
-
-def main_handcrafted():
-    x = 0
+        test_model(model_ft, loss, acc, dataloaders_dict, device, save_pred_path)
 
 if __name__ == "__main__":
-    a = input("Choose This type(NN/Not-NN): ")
-    if(a == 'NN'):
-        main_network()
-        print("Finish Training Time: ", datetime.now())
-    elif(a == 'Not-NN'):
-        main_handcrafted()
+     main_network()
+     print("Finish Training Time: ", datetime.now())

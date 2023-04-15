@@ -10,8 +10,7 @@ def test_model(
         res_acc,
         dataloaders: Dict[str, torch.utils.data.dataloader.DataLoader],
         device: torch.device,
-        save_pred_path: Union[None, str] = None,
-        is_inception: bool = False
+        save_pred_path: Union[None, str] = None
     ) -> None:
 
     # Set model to evaluate mode
