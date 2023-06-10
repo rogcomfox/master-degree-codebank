@@ -55,8 +55,34 @@ def bgr_to_hsi(rgb_img):
         hsi_to_zero[:,:,0] = 0
         return hsi_img, hsi_to_zero
 
-def watershed_segment(img):
-    s = 0
+def watershed_segment(lab_img,ori_img,  morph_kernel=5):
+    img_gray = cv.cvtColor(lab_img, cv.COLOR_BGR2GRAY)
+    #otsu thresholding
+    ret, thresh = cv.threshold(img_gray, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
+    #define kernel for morphological processing
+    kernel = np.ones((morph_kernel, morph_kernel), np.uint8)
+    #closing morphological
+    img_dilate = cv.dilate(thresh, kernel, iterations=1)
+    img_erosion = cv.erode(img_dilate, kernel, iterations=3)
+    #sure bg
+    sure_bg = cv.dilate(img_erosion, kernel, iterations=2)
+    dist_transform = cv.distanceTransform(img_erosion, cv.DIST_L2, 3)
+    ret_fg, sure_fg = cv.threshold(dist_transform, 0.5 * dist_transform.max(), 255, 0)
+    sure_fg = np.uint8(sure_fg) #Convert to uint8 from float
+    unknown = cv.subtract(sure_bg,sure_fg)
+    ret3, markers = cv.connectedComponents(sure_fg)
+    markers = markers + 10
+    markers[unknown==255] = 0
+    markers = cv.watershed(lab_img,markers)
+    # plot to ori image
+    labels = np.unique(markers)
+    new_contours = []
+    for label in labels[2:]:
+        target = np.where(markers == label, 255, 0).astype(np.uint8)
+        contours, _ = cv.findContours(target, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        new_contours.append(contours[0])
+    res_img = cv.drawContours(ori_img, new_contours, -1, (0,255,0), 3)
+    return res_img
 
 def kmeans_segment(img, k=3):
     #reshape image
@@ -91,7 +117,6 @@ def post_processing(img, median_size=5, morph_kernel=5, thresh_low=50, thresh_up
 
 # to remove background with edge detector
 def draw_edge(ori_img, canny_mask):
-    h, w = ori_img.shape[:2]
     #first find contour
     contours, _ = cv.findContours(canny_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     img_copy = ori_img.copy()

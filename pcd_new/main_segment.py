@@ -17,9 +17,9 @@ def main_segment():
     opening_lab, canny_lab = post_processing(lab_segment)
     img_edge = draw_edge(img, canny_lab)
     cv.imshow('apply_edge', img_edge)
-    # cv.imshow('lab_segment',lab_segment)
-    # cv.imshow('morph_result', opening_lab)
-    # cv.imshow('canny_result', canny_lab)
+    cv.imshow('lab_segment',lab_segment)
+    cv.imshow('morph_result', opening_lab)
+    cv.imshow('canny_result', canny_lab)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
@@ -29,7 +29,12 @@ def segment_comparison():
     img = cv.resize(img, (800,600))
     #conversion to lab
     _, lab_to_zero = bgr_to_lab(img)
-    watershed_result = watershed_segment(lab_to_zero)
+    lab_segment = kmeans_segment(lab_to_zero, k=3)
+    _, canny_lab = post_processing(lab_segment)
+    img_edge = draw_edge(img, canny_lab)
+    watershed_result = watershed_segment(lab_to_zero, img)
+    cv.imshow('proposed_method', img_edge)
+    cv.imshow('watershed', watershed_result)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
@@ -59,6 +64,6 @@ def color_space_effect():
     cv.destroyAllWindows()
 
 if __name__ == '__main__':
-    main_segment()
-    # segment_comparison()
+    # main_segment()
+    segment_comparison()
     # color_space_effect()
