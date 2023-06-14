@@ -67,6 +67,7 @@ def watershed_segment(lab_img,ori_img,  morph_kernel=5):
     #sure bg
     sure_bg = cv.dilate(img_erosion, kernel, iterations=2)
     dist_transform = cv.distanceTransform(img_erosion, cv.DIST_L2, 3)
+    #sure fg
     ret_fg, sure_fg = cv.threshold(dist_transform, 0.5 * dist_transform.max(), 255, 0)
     sure_fg = np.uint8(sure_fg) #Convert to uint8 from float
     unknown = cv.subtract(sure_bg,sure_fg)
@@ -82,7 +83,7 @@ def watershed_segment(lab_img,ori_img,  morph_kernel=5):
         contours, _ = cv.findContours(target, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         new_contours.append(contours[0])
     res_img = cv.drawContours(ori_img, new_contours, -1, (0,255,0), 3)
-    return res_img
+    return res_img, sure_bg, sure_fg, thresh
 
 def kmeans_segment(img, k=3):
     #reshape image
